@@ -1,0 +1,17 @@
+# Sistema Imobiliária R.M
+
+Projeto desenvolvido em Python para geração de orçamento de aluguel.
+
+## Funcionalidades
+- Cálculo de aluguel
+- Parcelamento do contrato
+- Geração de CSV
+- Orientação a Objetos
+
+## Tecnologias
+- Python
+- CSV
+
+## Integrantes
+- Caio Shintani
+- Lucas Saraiva
