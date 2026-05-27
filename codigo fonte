@@ -1,0 +1,148 @@
+import csv
+
+
+class Imovel:
+    def __init__(self, tipo, quartos=1, garagem=0, criancas=False):
+        self.tipo = tipo.lower()
+        self.quartos = quartos
+        self.garagem = garagem
+        self.criancas = criancas
+
+    def calcular_aluguel(self):
+        valor = 0
+
+        # APARTAMENTO
+        if self.tipo == "apartamento":
+            valor = 700
+
+            if self.quartos == 2:
+                valor += 200
+
+            valor += self.garagem * 300
+
+            # desconto de 5%
+            if not self.criancas:
+                valor *= 0.95
+
+        # CASA
+        elif self.tipo == "casa":
+            valor = 900
+
+            if self.quartos == 2:
+                valor += 250
+
+            valor += self.garagem * 300
+
+        # ESTÚDIO
+        elif self.tipo == "estudio":
+            valor = 1200
+
+            if self.garagem >= 2:
+                valor += 250
+
+                if self.garagem > 2:
+                    valor += (self.garagem - 2) * 60
+
+        return valor
+
+
+class Contrato:
+    def __init__(self, valor_contrato=2000, parcelas=5):
+        self.valor_contrato = valor_contrato
+        self.parcelas = parcelas
+
+    def calcular_parcelas(self):
+        return self.valor_contrato / self.parcelas
+
+
+class Orcamento:
+    def __init__(self, imovel, contrato):
+        self.imovel = imovel
+        self.contrato = contrato
+
+    def mostrar_orcamento(self):
+        aluguel = self.imovel.calcular_aluguel()
+        parcela = self.contrato.calcular_parcelas()
+
+        print("\n===== ORÇAMENTO =====")
+        print(f"Tipo do imóvel: {self.imovel.tipo}")
+        print(f"Valor mensal do aluguel: R$ {aluguel:.2f}")
+        print(f"Contrato parcelado em {self.contrato.parcelas}x")
+        print(f"Valor da parcela do contrato: R$ {parcela:.2f}")
+
+        return aluguel
+
+
+class ArquivoCSV:
+    def gerar_csv(self, valor_aluguel):
+
+        with open("orcamento_novo.csv", "w", newline="", encoding="utf-8") as arquivo:
+
+            # separador para Excel BR
+            escritor = csv.writer(arquivo, delimiter=";")
+
+            escritor.writerow(["Mês", "Valor do aluguel"])
+
+            for mes in range(1, 13):
+                escritor.writerow([mes, f"R$ {valor_aluguel:.2f}"])
+
+        print("\nArquivo CSV gerado com sucesso!")
+
+
+# ====================================
+# PROGRAMA PRINCIPAL
+# ====================================
+
+print("===== SISTEMA IMOBILIÁRIA R.M =====")
+
+# tipo do imóvel
+tipo = input(
+    "Digite o tipo do imóvel (apartamento/casa/estudio): "
+)
+
+# quartos
+quartos = 1
+
+if tipo.lower() != "estudio":
+    quartos = int(
+        input("Quantidade de quartos (1 ou 2): ")
+    )
+
+# garagem/vagas
+vagas = int(
+    input("Quantidade de vagas/garagem: ")
+)
+
+# crianças
+criancas = False
+
+if tipo.lower() == "apartamento":
+
+    resposta = input(
+        "Possui crianças? (s/n): "
+    )
+
+    if resposta.lower() == "s":
+        criancas = True
+
+# criando objetos
+imovel = Imovel(
+    tipo,
+    quartos,
+    vagas,
+    criancas
+)
+
+contrato = Contrato()
+
+orcamento = Orcamento(
+    imovel,
+    contrato
+)
+
+# mostrando orçamento
+valor_final = orcamento.mostrar_orcamento()
+
+# gerando CSV
+arquivo = ArquivoCSV()
+arquivo.gerar_csv(valor_final)
